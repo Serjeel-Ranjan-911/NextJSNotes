@@ -146,8 +146,6 @@ This format makes it easy to handle very big or complex routes.
 
 </details>
 
-
-
 <details> 
 <summary>Regular React Components</summary>
 
@@ -158,5 +156,203 @@ These components can be placed anywhere outside the **pages** folder. Prefreably
 ![regular components](./img/regularComponents.png)
 
 The folder name is up to you and here you can place your regular components.
+
+</details>
+
+ <details><summary>Pre-Fetching and Pre-Rendering</summary>
+ 
+ This is where we solve the problem realted to SEO by building the page on server itself.
+ 
+ Types of Pre-Rendering
+ 
+ - Static Generation
+ - Server-side Rendering
+ - Hybrid of above two
+
+ <details><summary>Static Generation</summary> 
+ 
+Here a static page is generated on **build time itself**.
+
+- This process is done only once during build process.
+
+**Advantage**
+
+- The static build pages are fully functional with react hence behave just like a normal react app.
+
+- These static pages can be easily cached by CDN which improves performance.
+
+**Disadvantage**
+
+- Since the page is generated only once. The server will never create a new build of this pages. So if we require to update this page in future for some reason, we need to rebuild our next app and redeploy.
+
+So overall this type of generation is good for pages that do not ever change in long run.
+
+ <details><summary>getStaticProps</summary>
+ 
+ To do static generation of a page we need to export this function from our **page components**.
+ 
+ ![getStaticProps](./img/getStaticProps.png)
+ 
+ Note:-
+ 
+ - The code written inside this function is not shipped to the client. Hence the code inside getStaticProps function is ran during the build process and not on the client side.
+ 
+ - Basically inside this function we write backend code and not frontend code. 
+ 
+ **How to use getStaticProps function?**
+ 
+ getStaticProps function is supposed to return and object with a key props. Anything inside the props key will be passed to our react component for our use.
+ 
+ ![getStaticProps example](./img/getStaticPropsExample.png)
+ 
+ As I said earlier we can write node js code inside getStaticProps function, we can import node js modules such as fs,path etc that is not accessible in frontend code.
+ 
+ So in more practical case of above example, we would like to fetch data from some local directory for which we require js module.
+ 
+ ![getStaticProps Example2](./img/getStaticPropsExample2.png)
+ 
+ so in this case we can see we are importing fs and path module that can't be used in frontend code but inside getStaticProps function to fetch data from some local json file.
+
+**Special Note:-**
+
+In case we are unable to load the required data (due to some error) and want to show 404 page. We can simple return this object from getStaticProps function.
+
+```
+    {notFound: true}
+```
+
+  <details><summary>Incremental Static Generation (ISR)</summary>
+ 
+ The flaw of above method was the page is generated only once during build time. However next has fix for that as well. 
+ 
+We can generate the static page for every request we get and we can set time also before which static page should not be generated.
+
+To use this feature we have to set another property in return object of getStaticProps function i.e **revalidate**.
+
+![incremental static regeneration](./img/incrementalStaticRegeneration.png)
+
+In the above code revalidate value is set to 10. This means if a request comes after 10 seconds has been passed since the last regeneration of page, The server will generate a new static page and give it to the user.
+
+ </details>
+ 
+  <details><summary>More about getStaticProps</summary>
+
+In the return object we can set a few more values.
+
+![more options in getStaticProps](./img/moreOptionsinGetStaticProps.png)
+
+- notFound
+
+This is a boolean value you can set to true incase something goes wrong and you want to show 404 page to user.
+
+- redirect
+
+This is an object specifying the path to which user should be redirected incase we want the user to go to some other page based on situation.
+
+ </details>
+
+  <details><summary>What is context in getStaticProps?</summary>
+  
+  The context object helps us to get the url parameters.
+
+![getStaticProps context](./img/getStaticPropsContext.png)
+
+  </details>
+
+  <details><summary>How to statically generate [dynamic].js pages?</summary>
+  
+  Since this is a dynamic page. There will be many values for **dynamic** hence to generate this page statically, we need to generate each a page for each possible value of **dynamic**.
+
+Hence we need to tell next js in advance all the possible values of **dynamic** so that next can generate static page for each. This can be done using **getStaticPaths** function.
+
+![getStaticPaths](./img/getStaticPaths.png)
+
+Example:-
+
+getStaticPaths function should return an object with a key set to params. This params key should contain an array of object and each of these objects represent one possible params.(see example to be more clear)
+
+![getStaticPaths](./img/getStaticPathsExample.png)
+
+**What is fallback?**
+
+In practical case there might be a huge number of dynamic routes and it is very impractical to generate a static page for each of those.
+
+In those cases we can set fallback to true. What this will do is, It will generate the page **just in time** for the paths not mentioned in paths parameter.
+
+Example:-
+
+![path with fallback as true](./img/pathWithFallbackTrue.png);
+
+Here in this case a static page will will be generated only for **p1** and for any other param, page will be generated just in time on server.
+
+Note:- if you set fallback to true, you must also add a fallback check to make sure data is ready before being used.
+
+With fallback check you can serve some content to user before loading actual data.
+
+![fallback check](./img/fallbackCheck.png)
+
+**hence in practical case statically generate only the highly visited pages and leave the rest**
+
+Note:-
+
+    fallback: 'blocking'
+
+fallback can also be set to blocking if you don't want fallback check which in this case will take a bit long for page to load since server will generate the page before serving it to the user and no pre-static data will be shown to user since we don't have any fallback check here.
+
+  </details>
+ 
+ 
+  <details><summary>Automatic Static Generation?</summary>
+ 
+ For pages that do not contain any dynamic data. Nextjs will smartly do static generation of that page without us doing anything. 
+ 
+ </details>
+ 
+ </details>
+
+  </details>
+ <details><summary>Server Side Rendering</summary>
+ 
+ In server side rendering the page will be generated for each request just in time and we will also have access to the **request** object which we didn't had in static generation. 
+
+ For this we will use the **getServerSideProps** function
+
+ ![getServerSideProps](./img/getServerSideProps.png)
+
+Note - in a single page either use static page generation or use server side rendering but not both.
+
+The usage format of getServerSideProps is same as getStaticProps. Here also we have to return an object that contains props, we can use context and all other thing except for revalidate key. There is no such concept here since page is built for each request.
+
+<details><summary>How to get request and response object?</summary>
+
+We can get these object from the context.
+
+![request and response](./img/requestAndResponse.png)
+
+</details>
+
+ <details><summary>Server Side Rendering for [dynamic].js pages</summary>
+
+Here there is no concept of similar to getStaticPaths.
+
+Just use getServerSideProps the same way.
+
+</details>
+
+ </details>
+  </details>
+
+<details> 
+<summary>Client Side Data Fetching</summary>
+
+Now we have seen a lot about server side data fetching and pre-rendering then why do we still need client side data fetching?
+
+For data that is highly dynamic/highly specific it's impractical to pre-build it at server and better to get it on the client side.
+
+![client side data fetching](./img/clientSideDataFetching.png)
+
+There is nothing new here, it's very same as how you do api calls in react.
+
+**Generally server side data fetching is combined with client side rendering so that user is given some data on the first load and later that data is overridden by latest data.**
 
 </details>
