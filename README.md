@@ -313,11 +313,11 @@ fallback can also be set to blocking if you don't want fallback check which in t
   </details>
  <details><summary>Server Side Rendering</summary>
  
- In server side rendering the page will be generated for each request just in time and we will also have access to the **request** object which we didn't had in static generation. 
+ In server side rendering the page will be generated for each request just in time and we will also have access to the **request** object which we didn't had in static generation.
 
- For this we will use the **getServerSideProps** function
+For this we will use the **getServerSideProps** function
 
- ![getServerSideProps](./img/getServerSideProps.png)
+![getServerSideProps](./img/getServerSideProps.png)
 
 Note - in a single page either use static page generation or use server side rendering but not both.
 
@@ -354,5 +354,45 @@ For data that is highly dynamic/highly specific it's impractical to pre-build it
 There is nothing new here, it's very same as how you do api calls in react.
 
 **Generally server side data fetching is combined with client side rendering so that user is given some data on the first load and later that data is overridden by latest data.**
+
+</details>
+
+<details><summary>Optimizing NextJs Apps</summary>
+
+Here we will add meta data for crawlers to read.
+
+NextJs provides us some special components fro this purpose.
+
+## Head
+
+To insert content into the head of a page, we can use **Head** which can be imported from next.
+
+Now we can add title and meta data to the page.
+
+![head tag in next](./img/headInNext.png)
+
+## _document.js
+
+We can add extra data to our whole page inside the _document.js. This file is not present by default and should be created by us.
+
+![document](./img/document.png)
+
+Inside this we can set extra properties to the page such as lang,overlay.
+
+## Optimizing Images
+
+We can import a special image component from image
+
+```js
+import Image from "next/image";
+``` 
+
+This image component allows us to specify the expected resolution of an image and convert that image to webp format so that size can be reduced significantly. 
+
+Plus this enables lazy loading for the image.
+
+- check the docs for more properties for image optimization. 
+
+![optimized image](./img/optimizedImages.png)
 
 </details>
