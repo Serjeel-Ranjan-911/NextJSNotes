@@ -371,9 +371,9 @@ Now we can add title and meta data to the page.
 
 ![head tag in next](./img/headInNext.png)
 
-## _document.js
+## \_document.js
 
-We can add extra data to our whole page inside the _document.js. This file is not present by default and should be created by us.
+We can add extra data to our whole page inside the \_document.js. This file is not present by default and should be created by us.
 
 ![document](./img/document.png)
 
@@ -385,14 +385,48 @@ We can import a special image component from image
 
 ```js
 import Image from "next/image";
-``` 
+```
 
-This image component allows us to specify the expected resolution of an image and convert that image to webp format so that size can be reduced significantly. 
+This image component allows us to specify the expected resolution of an image and convert that image to webp format so that size can be reduced significantly.
 
 Plus this enables lazy loading for the image.
 
-- check the docs for more properties for image optimization. 
+- check the docs for more properties for image optimization.
 
 ![optimized image](./img/optimizedImages.png)
 
 </details>
+
+ <details><summary>Contructing the Backend</summary>
+
+Here we will build all REST api end points.
+
+First step is to make a directory inside pages folder called **api**.
+
+**This is a special folder recognised by next js and should be named as api**
+
+Inside this api folder we follow the same format for directory routing to create various end points.
+
+Let's see a basic example:-
+
+Each api end point file is supposed to export default a **handler** function which has access to the **req** and **res** objects. Inside this we can write totally valid nodejs code.
+
+![first api route](./img/firstAPIRoute.png)
+
+The above example api can be accessed at /api/feedback route and in response it will send a json document back.
+
+A bit better example on handling post requests:- 
+
+![handling post requests](./img/handlingPostRequest.png)
+
+## Making dynamic api routes
+
+This is done similar to dynamic pages.
+
+![dynamic API Route](./img/dynamicAPIRoute.png)
+
+Here again we can handle various request method such as POST,GET,DELETE etc.
+
+**And Just like catch-all pages we can implement a catch-all api route**
+
+ </details>
